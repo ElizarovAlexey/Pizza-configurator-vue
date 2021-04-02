@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="icon" href="{% static 'img/icons/pizza-icon.ico' %}">
+    <title>Cart</title>
+</head>
+
+<body>
+    
+    <!-- Header -->
+    <header id="header" class="header">
+        <div class="container cart__container">
+            <div class="header__inner">
+                <div id="header__logo" class="header__logo">
+                    <a href="{% url 'home_page' %}">
+                        <img class="header__logo-image" src="{% static 'img/icons/logo.png' %}" alt="Logotype">
+                    </a>
+                </div>
+
+                <ul id="nav" class="nav nav__items">
+                    <li class="nav__item">
+                        <a href="{% url 'home_page' %}#pizzas" class="nav__item-link js-scroll">
+                            <img src="{% static 'img/icons/pizza-icon.png' %}" alt="Pizza icon"> Пиццы
+                        </a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="{% url 'home_page' %}#desserts" class="nav__item-link js-scroll">
+                            <img src="{% static 'img/icons/dessert-icon.png' %}" alt="Drink icon"> Десерты
+                        </a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="{% url 'home_page' %}#drinks" class="nav__item-link js-scroll">
+                            <img src="{% static 'img/icons/drink-icon.png' %}" alt="Drink icon"> Напитки
+                        </a>
+                    </li>
+                    <li id="nav__close" class="nav__close">
+                        <img class="nav__close-image" src="{% static 'img/icons/close-icon.png' %}" alt="Close icon">
+                    </li>
+                </ul>
+
+                <div class="header__cart">
+                    <a href="#" class="header__cart-link">
+                        <img src="{% static 'img/icons/cart.png' %}" alt="Cart" class="header__cart-image">
+                        <div class="header__cart-counter">0</div>
+                    </a>
+                </div>
+
+                <div id="header__burger" class="header__burger">
+                    <img class="header__burger-image" src="{% static 'img/icons/burger-icon.png' %}" alt="Burger icon">
+                </div>
+            </div> <!-- ./header__inner -->
+        </div> <!-- ./container -->
+    </header> <!-- ./header -->
+
+
+    <!-- Cart -->
+    <div class="cart">
+        <div class="constructor__container">
+            <div class="cart__inner">
+                <h2 class="cart__title">
+                    Корзина
+                </h2>
+                <hr class="cart__sep">
+                <ul id="cart__items" class="cart__items">
+
+                </ul>
+
+                <p class="cart__price-total">
+                    <span class="price-total-text">Итого: </span>83 лей
+                </p>
+            </div> <!-- /.cart__inner -->
+        </div> <!-- /.container -->
+    </div> <!-- /.cart -->
+
+
+<script src="{% static 'js/constructor.js' %}"></script>
+<script src="{% static 'js/localStorage.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+</body>
+
+</html>

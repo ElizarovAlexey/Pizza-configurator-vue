@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="icon" href="{% static 'img/icons/pizza-icon.ico' %}">
+    <title>Pizza configurator</title>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header id="header" class="header">
+        <div class="container header__container">
+            <div class="header__inner">
+                <div id="header__logo" class="header__logo">
+                    <a href="{% url 'home_page' %}">
+                        <img class="header__logo-image" src="{% static 'img/icons/logo.png' %}" alt="Logotype">
+                    </a>
+                </div>
+
+                <ul id="nav" class="nav nav__items">
+                    <li class="nav__item">
+                        <a href="#pizzas" class="nav__item-link js-scroll">
+                            <img src="{% static 'img/icons/pizza-icon.png' %}" alt="Pizza icon"> Пиццы
+                        </a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="#desserts" class="nav__item-link js-scroll">
+                            <img src="{% static 'img/icons/dessert-icon.png' %}" alt="Drink icon"> Десерты
+                        </a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="#drinks" class="nav__item-link js-scroll">
+                            <img src="{% static 'img/icons/drink-icon.png' %}" alt="Drink icon"> Напитки
+                        </a>
+                    </li>
+                    <li id="nav__close" class="nav__close">
+                        <img class="nav__close-image" src="{% static 'img/icons/close-icon.png' %}" alt="Close icon">
+                    </li>
+                </ul>
+
+                <div class="header__cart">
+                    <a href="#" class="header__cart-link">
+                        <img src="{% static 'img/icons/cart.png' %}" alt="Cart" class="header__cart-image">
+                        <div id="cart-counter" class="header__cart-counter">0</div>
+                    </a>
+                </div>
+
+                <div id="header__burger" class="header__burger">
+                    <img class="header__burger-image" src="{% static 'img/icons/burger-icon.png' %}" alt="Burger icon">
+                </div>
+            </div> <!-- ./header__inner -->
+        </div> <!-- ./container -->
+    </header> <!-- ./header -->
+
+
+    <!-- Slider -->
+    <div class="slider">
+        <div class="slider__container">
+            <div class="slider__inner">
+
+                <div class="slider__items">
+                    <img class="slider__item" src="{% static 'img/slider/slide1.png' %}" alt="Slide">
+                    <img class="slider__item" src="{% static 'img/slider/slide2.png' %}" alt="Slide">
+                    <img class="slider__item" src="{% static 'img/slider/slide3.png' %}" alt="Slide">
+                    <img class="slider__item" src="{% static 'img/slider/slide1.png' %}" alt="Slide">
+                    <img class="slider__item" src="{% static 'img/slider/slide2.png' %}" alt="Slide">
+                    <img class="slider__item" src="{% static 'img/slider/slide3.png' %}" alt="Slide">
+                </div>
+
+                <div class="slider__arrows">
+                    <img id="arrow-left" class="slider__arrow slider__arrow--left" src="{% static 'img/icons/left-arrow.png' %}"
+                        alt="left arrow">
+
+                    <img id="arrow-right" class="slider__arrow slider__arrow--right" src="{% static 'img/icons/right-arrow.png' %}"
+                        alt="right arrow">
+                </div>
+
+                <div id="slider__dots" class="slider__dots">
+                    <div class="slider__dots-item slider__dots-item--active"></div>
+                    <div class="slider__dots-item"></div>
+                    <div class="slider__dots-item"></div>
+                    <div class="slider__dots-item"></div>
+                    <div class="slider__dots-item"></div>
+                    <div class="slider__dots-item"></div>
+                </div>
+
+            </div> <!-- ./slider__inner -->
+        </div> <!-- ./container -->
+    </div> <!-- ./slider -->
+
+
+    <!-- Pizzas -->
+    <section id="pizzas" class="pizzas">
+        <div class="container">
+            <div class="pizzas__inner">
+
+                <h1 class="pizzas__title">Пиццы</h1>
+
+                <div id="pizzas__items" class="pizzas__items">
+
+
+                </div>
+
+            </div> <!-- /.pizzas__inner -->
+        </div> <!-- /.container -->
+    </section> <!-- /.pizzas -->
+
+
+    <!-- Desserts -->
+    <section id="desserts" class="desserts">
+        <div class="container">
+            <div class="desserts__inner">
+
+                <h1 class="desserts__title">Десерты</h1>
+
+                <div id="dessert__items" class="pizzas__items desserts__items">
+
+                </div>
+            </div> <!-- ./desserts__inner -->
+        </div> <!-- ./container -->
+    </section> <!-- ./desserts -->
+
+
+    <!-- Drinks -->
+    <section id="drinks" class="drinks">
+        <div class="container">
+            <div class="drinks__inner">
+
+                <h1 class="drinks__title">Напитки</h1>
+
+                <div id="drink__items" class="pizzas__items drinks__items">
+
+                </div>
+            </div> <!-- ./drinks__inner -->
+        </div> <!-- ./container -->
+    </section> <!-- ./drinks -->
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__col">
+                    <div class="footer__col-title">
+                        Полезные ссылки
+                    </div>
+
+                    <ul class="footer__col-list">
+                        <li class="footer__list-item">
+                            <a href="#!" class="footer__list-item-link">
+                                Доставка
+                            </a>
+                        </li>
+                        <li class="footer__list-item">
+                            <a href="#!" class="footer__list-item-link">
+                                Оплата
+                            </a>
+                        </li>
+                        <li class="footer__list-item">
+                            <a href="#!" class="footer__list-item-link">
+                                Акции
+                            </a>
+                        </li>
+                        <li class="footer__list-item">
+                            <a href="#!" class="footer__list-item-link">
+                                Политика конфиденциальности
+                            </a>
+                        </li>
+                    </ul>
+                </div> <!-- /.footer__col-->
+
+                <div class="footer__col">
+                    <div class="footer__col-title">
+                        Оплата
+                    </div>
+
+                    <ul class="footer__col-list">
+                        <li class="footer__list-item">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ullamcorper justo, nec,
+                            pellentesque.
+                        </li>
+                        <li class="footer__list-item">
+                            <ul class="list__inner">
+                                <li class="list__inner-item">
+                                    <a href="#!" class="list__inner link">
+                                        <img src="{% static 'img/icons/visa.png' %}" alt="visa">
+                                    </a>
+                                </li>
+                                <li class="list__inner-item">
+                                    <a href="#!" class="list__inner link">
+                                        <img src="{% static 'img/icons/master-card.png' %}" alt="master card">
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div> <!-- /.footer__col-->
+
+                <div class="footer__col">
+                    <div class="footer__col-title">
+                        Контакты
+                    </div>
+
+                    <ul class="footer__col-list">
+                        <li class="footer__list-item">
+                            <a href="#!" class="footer__list-item-link">
+                                <img src="{% static 'img/icons/phone.svg' %}" alt="phone"> +373 689 90 235
+                            </a>
+                        </li>
+                        <li class="footer__list-item">
+                            <a href="#!" class="footer__list-item-link">
+                                <img src="{% static 'img/icons/phone.svg' %}" alt="phone"> +373 689 90 235
+                            </a>
+                        </li>
+                        <li class="footer__list-item">
+                            <a href="#!" class="footer__list-item-link">
+                                <img src="{% static 'img/icons/mail.svg' %}" alt="main"> pizza@pizza.md
+                            </a>
+                        </li>
+                    </ul>
+                </div> <!-- /.footer__col-->
+
+                <div class="footer__col">
+                    <div class="footer__col-title">
+                        Социальные сети
+                    </div>
+
+                    <ul class="footer__col-list">
+                        <li class="footer__list-item">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ullamcorper justo, nec,
+                            pellentesque.
+                        </li>
+                        <li class="footer__list-item">
+                            <ul class="list__inner">
+                                <li class="list__inner-item">
+                                    <a href="#!" class="list__inner link">
+                                        <img src="{% static 'img/icons/vk.svg' %}" alt="vk">
+                                    </a>
+                                </li>
+                                <li class="list__inner-item">
+                                    <a href="#!" class="list__inner link">
+                                        <img src="{% static 'img/icons/youtube.svg' %}" alt="youtube">
+                                    </a>
+                                </li>
+                                <li class="list__inner-item">
+                                    <a href="#!" class="list__inner link">
+                                        <img src="{% static 'img/icons/facebook.svg' %}" alt="facebook">
+                                    </a>
+                                </li>
+                                <li class="list__inner-item">
+                                    <a href="#!" class="list__inner link">
+                                        <img src="{% static 'img/icons/telegram.svg' %}" alt="telegram">
+                                    </a>
+                                </li>
+                                <li class="list__inner-item">
+                                    <a href="#!" class="list__inner link">
+                                        <img src="{% static 'img/icons/etsy.svg' %}" alt="etsy">
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div> <!-- /.footer__col-->
+            </div>
+        </div> <!-- /.container -->
+    </footer> <!-- /.footer -->
+
+
+    <script src="{% static 'js/pizzas.js' %}"></script>
+    <script src="{% static 'js/localStorage.js' %}"></script>
+    <script src="{% static 'js/cart.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>

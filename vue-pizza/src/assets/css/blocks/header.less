@@ -1,0 +1,116 @@
+// main: ../style.less
+
+.header {
+    box-shadow: -1px 3px 4px 0px #dedede;
+    background-color: #fff;
+
+    width: 100%;
+    transition: .3s linear;
+    z-index: 9;
+    padding-top: 5px;
+
+    &--fixed {
+        transition: .3s linear;
+        position: fixed;
+        z-index: 9;
+    }
+}
+
+.header__container {
+    padding: 0 30px 0 0;
+}
+
+.header__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header__logo {
+    margin-top: -10px;
+}
+
+.header__logo-image {
+    max-width: 60px;
+    height: auto;
+}
+
+.nav__items {
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    align-items: center;
+}
+
+.nav__item {
+    margin-right: 50px;
+
+    &:last-child {
+        margin-right: 0;
+    }
+}
+
+.nav__item-link {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+    color: @black;
+    position: relative;
+
+    &::before {
+        position: absolute;
+        content: '';
+        background-color: @red;
+        width: 0;
+        bottom: -5px;
+        left: 0;
+        height: 2px;
+
+        transition: .2s linear;
+    }
+
+    transition: .2s linear;
+    &:hover {
+        color: @red;
+
+        &::before {
+            width: 100%;
+        }
+    }
+}
+
+.header__cart {
+    margin-top: -20px;
+    display: block;
+}
+
+.header__cart-image {
+    display: block;
+    width: 30px;
+    height: auto;
+    position: absolute;
+}
+
+.header__cart-counter {
+    position: relative;
+    font-size: 11px;
+    bottom: 6px;
+    left: 20px;
+    background-color: @red;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+.header__burger {
+    display: none;
+
+    &-image {
+        width: 60px;
+        cursor: pointer;
+    }
+}
+
+.nav__close {
+    display: none;
+}
