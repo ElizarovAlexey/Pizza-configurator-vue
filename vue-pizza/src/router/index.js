@@ -15,7 +15,8 @@ const routes = [
   {
     path: '/constructor/:id',
     name: 'Constructor',
-    component: Constructor
+    component: Constructor,
+    props: true,
   },
   {
     path: '/cart',
@@ -25,6 +26,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
+  mode: 'history',
   routes
 })
 

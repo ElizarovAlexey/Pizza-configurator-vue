@@ -12,8 +12,12 @@
             <h2 class="constructor__title">Игредиенты</h2>
             <div class="constructor__ingredients-items" id="constructor__defaultIngredients">
 
-              <button type="button" class="constructor__ingredients-button constructor__ingredients-button--checked">
-                Колбаса
+              <button v-for="ingredient in pizza.ingredients"
+                      :key="ingredient.id"
+                      type="button"
+                      class="constructor__ingredients-button constructor__ingredients-button--checked"
+                      @click="handleDefaultIngredients($event.target, ingredient)">
+                {{ ingredient }}
               </button>
 
             </div>
@@ -23,8 +27,12 @@
             <h2 class="constructor__title">Дополнительные игредиенты</h2>
             <div class="constructor__ingredients-items" id="constructor__allIngredients">
 
-              <button type="button" class="constructor__ingredients-button">
-                Сосиска
+              <button v-for="ingredient in ingredients"
+                      :key="ingredient.id"
+                      type="button"
+                      class="constructor__ingredients-button"
+                      @click="handleAdditionalIngredients($event.target, ingredient.value, ingredient.cost)">
+                {{ ingredient.value }}
               </button>
 
             </div>
@@ -36,13 +44,19 @@
           <div id="pizza-info__details">
 
             <img class="pizza-info__image" src="../assets/img/products/pizza1.jpg" alt="pizza">
-            <p class="pizza-info__name">Крутая пицца</p>
+            <p class="pizza-info__name">{{ pizza.name }}</p>
             <div class="pizza-info__selected-dough">
-              Традиционное
+              {{ pizza.dough }}
             </div>
 
             <div class="pizza-info__sizes">
-              <button class="pizzas__item-size">25 см</button>
+              <button v-for="size in sizes"
+                      :key="size.id"
+                      class="pizzas__item-size"
+                      :class="size.value === pizza.size ? 'size-selected' : ''"
+                      @click="changeSize(size.value, $event.target)">
+                {{ size.value }} см
+              </button>
             </div>
 
             <p class="pizza-info__help-text">
@@ -55,21 +69,37 @@
 
             <li class="pizza-info__selected-ingredient">
               <p class="pizza-info__selected-ingredient-text">
-                Традиционное, 30 см
+                {{ pizza.dough }}, {{ pizza.size }} см
               </p>
 
               <p class="pizza-info__selected-ingredient-price">
-                55 лей
+                {{ pizzaCost }} лей
               </p>
             </li>
 
-            <li class="pizza-info__selected-ingredient">
+            <li v-for="defaultIngredient in defaultIngredients"
+                :key="defaultIngredient.id"
+                class="pizza-info__selected-ingredient">
+
               <p class="pizza-info__selected-ingredient-text">
-                Колбаса
+                {{ defaultIngredient }}
+              </p>
+
+            </li>
+
+            <li class="pizza-info__selected-ingredient pizza-info__ingredients-text">
+              Дополнительные ингредиенты:
+            </li>
+
+            <li v-for="ingredient in selectedIngredients"
+                :key="ingredient.id"
+                class="pizza-info__selected-ingredient">
+              <p class="pizza-info__selected-ingredient-text">
+                {{ ingredient.value }}
               </p>
 
               <p class="pizza-info__selected-ingredient-price">
-                10 лей
+                {{ ingredient.cost }} лей
               </p>
             </li>
 
@@ -85,7 +115,7 @@
 
               <p>Итого: </p>
               <p class="pizza-info__price">
-                666 лей
+                {{ this.totalPrice }} лей
               </p>
 
             </div>
@@ -99,12 +129,110 @@
 
 <script>
 export default {
-  name: "Constructor"
+  name: "Constructor",
+  props: ['id'],
+  data() {
+    return {
+      pizza: {},
+      ingredients: {},
+      sizes: {},
+      defaultIngredients: [],
+      selectedIngredients: [],
+      allIngredients: [],
+      totalPrice: 0,
+      additionalPrice: 0,
+      pizzaCost: 0,
+    }
+  },
+  created() {
+    this.loadPizza();
+    this.loadIngredients();
+    this.loadSizes();
+  },
+  methods: {
+    async loadPizza() {
+      this.pizza = await fetch(
+          `${this.$store.getters.getServerUrl}/pizzas/${this.id}`
+      ).then(response => response.json());
+      this.defaultIngredients = (this.pizza.ingredients).slice();
+      this.totalPrice = this.pizzaCost = this.pizza.cost;
+    },
+    async loadIngredients() {
+      this.ingredients = await fetch(
+          `${this.$store.getters.getServerUrl}/ingredients/`
+      ).then(response => response.json())
+    },
+    async loadSizes() {
+      this.sizes = await fetch(
+          `${this.$store.getters.getServerUrl}/sizes/`
+      ).then(response => response.json())
+    },
+    handleDefaultIngredients(button, ingredient) {
+      this.allIngredients = this.defaultIngredients.concat(this.selectedIngredients);
+
+      if (button.classList.contains('constructor__ingredients-button--checked')) {
+        button.classList.remove('constructor__ingredients-button--checked');
+        this.defaultIngredients.splice(this.defaultIngredients.indexOf(ingredient), 1);
+      } else if (this.allIngredients.length < 10) {
+        button.classList.add('constructor__ingredients-button--checked');
+        this.defaultIngredients.push(ingredient);
+      }
+    },
+    handleAdditionalIngredients(button, value, cost) {
+      this.allIngredients = this.defaultIngredients.concat(this.selectedIngredients);
+
+      if (button.classList.contains('constructor__ingredients-button--checked')) {
+        button.classList.remove('constructor__ingredients-button--checked');
+        this.selectedIngredients.splice(this.selectedIngredients.indexOf(value), 1);
+      } else if (this.allIngredients.length < 10) {
+        button.classList.add('constructor__ingredients-button--checked');
+        this.selectedIngredients.push({value, cost});
+      }
+
+      this.additionalPrice = 0;
+
+      this.selectedIngredients.forEach(ingredient => {
+        this.additionalPrice += ingredient.cost;
+      });
+
+      this.totalPrice = this.pizzaCost + this.additionalPrice;
+    },
+    changeSize(size, sizeBtn) {
+      let sizesButtons = document.getElementsByClassName('pizzas__item-size');
+      for (let btn of sizesButtons) {
+        btn.classList.remove('size-selected');
+      }
+      sizeBtn.classList.add('size-selected');
+
+      let coefficient = 0;
+      switch (size) {
+        case 25:
+          coefficient = 0.8;
+          break;
+        case 30:
+          coefficient = 1;
+          break;
+        case 35:
+          coefficient = 1.2;
+          break;
+        case 40:
+          coefficient = 1.4;
+          break;
+      }
+      this.pizzaCost = Math.ceil(this.pizza.cost * coefficient);
+      this.totalPrice = Math.ceil((this.pizzaCost + this.additionalPrice) * coefficient);
+    }
+  }
 }
 </script>
 
 <style scoped>
-  .constructor {
-    margin-bottom: 150px;
-  }
+.constructor {
+  margin-bottom: 150px;
+}
+
+.pizza-info__ingredients-text {
+  font-weight: bold;
+  font-size: 15px;
+}
 </style>

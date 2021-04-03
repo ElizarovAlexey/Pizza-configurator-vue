@@ -47,26 +47,26 @@
           <!-- Pizza items -->
           <div id="pizzas__items" class="pizzas__items">
 
-            <div class="pizzas__item">
+            <div v-for="pizza in pizzasList" :key="pizza.id" class="pizzas__item">
               <div class="pizzas__item-img">
-                <img class="pizzas__item-image" src="../assets/img/products/pizza1.jpg" alt="pizza">
+                <img class="pizzas__item-image" :src="pizza.image" alt="pizza">
               </div>
-              <p class="pizzas__item-title">Крутая пицца</p>
+              <p class="pizzas__item-title">{{ pizza.name }}</p>
               <p class="pizzas__item-description">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut, velit!
+                {{ pizza.description }}
               </p>
               <div class="pizzas__item-dough-container">
-                <button class="pizzas__item-dough dough-selected">Традиционное тесто</button>
+                <button class="pizzas__item-dough dough-selected">{{ pizza.dough }} тесто</button>
               </div>
               <div class="pizzas__item-sizes">
-                <button class="pizzas__item-size size-selected">30 см</button>
+                <button class="pizzas__item-size size-selected">{{ pizza.size }} см</button>
               </div>
-              <a class="pizzas__detail-btnAdd" href="#">
+              <a @click="openConstructor(pizza.id)" class="pizzas__detail-btnAdd" href="#">
                 <img src="../assets/img/icons/plus-icon.png" alt="plus icon">Изменить ингредиенты
               </a>
               <div class="pizzas__item-wrapper">
                 <button class="btn-tocart pizzas__item-tocart">В корзину</button>
-                <p class="pizzas__item-price">89 лей</p>
+                <p class="pizzas__item-price">{{ pizza.cost }} лей</p>
               </div>
             </div>
 
@@ -87,18 +87,18 @@
           <!-- Desserts items -->
           <div id="dessert__items" class="pizzas__items desserts__items">
 
-            <div class="pizzas__item desserts__item">
+            <div v-for="dessert in dessertsList" :key="dessert.id" class="pizzas__item desserts__item">
               <div class="pizzas__item-img desserts__item-img">
                 <img class="pizzas__item-image desserts__item-image" src="../assets/img/products/dessert1.webp"
                      alt="dessert">
               </div>
-              <p class="pizzas__item-title desserts__item-title">Вкусный десерт</p>
+              <p class="pizzas__item-title desserts__item-title">{{ dessert.name }}</p>
               <p class="pizzas__item-description desserts__item-description">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, incidunt!
+                {{ dessert.description }}
               </p>
               <div class="desserts__item-wrapper pizzas__item-wrapper">
                 <button class="btn-tocart pizzas__item-tocart">В корзину</button>
-                <p class="desserts__item-price pizzas__item-price">30 лей</p>
+                <p class="desserts__item-price pizzas__item-price">{{ dessert.cost }} лей</p>
               </div>
             </div>
 
@@ -118,18 +118,18 @@
           <!-- Drinks items -->
           <div id="drink__items" class="pizzas__items drinks__items">
 
-            <div class="pizzas__item drinks__item">
+            <div v-for="drink in drinksList" :key="drink.id" class="pizzas__item drinks__item">
               <div class="pizzas__item-img drinks__item-img">
                 <img class="pizzas__item-image drinks__item-image" src="../assets/img/products/drink1.webp"
                      alt="pizza">
               </div>
-              <p class="pizzas__item-title drinks__item-title">Вкусный напиток</p>
+              <p class="pizzas__item-title drinks__item-title">{{ drink.name }}</p>
               <p class="pizzas__item-description drinks__item-description">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum, reprehenderit.
+                {{ drink.description }}
               </p>
               <div class="drinks__item-wrapper pizzas__item-wrapper">
                 <button class="btn-tocart drinks__item-tocart">В корзину</button>
-                <p class="drinks__item-price pizzas__item-price">22 лей</p>
+                <p class="drinks__item-price pizzas__item-price">{{ drink.cost }} лей</p>
               </div>
             </div>
 
@@ -145,6 +145,38 @@
 
 export default {
   name: 'Home',
-  components: {}
+  data() {
+    return {
+      pizzasList: [],
+      dessertsList: [],
+      drinksList: [],
+    }
+  },
+  components: {},
+  created() {
+    this.loadPizzaList();
+    this.loadDessertList();
+    this.loadDrinkList();
+  },
+  methods: {
+    async loadPizzaList() {
+      this.pizzasList = await fetch(
+          `${this.$store.getters.getServerUrl}/pizzas/`
+      ).then(response => response.json())
+    },
+    async loadDessertList() {
+      this.dessertsList = await fetch(
+          `${this.$store.getters.getServerUrl}/desserts/`
+      ).then(response => response.json())
+    },
+    async loadDrinkList() {
+      this.drinksList = await fetch(
+          `${this.$store.getters.getServerUrl}/drinks/`
+      ).then(response => response.json())
+    },
+    openConstructor(id) {
+      this.$router.push({name: 'Constructor', params: {id: id}})
+    },
+  }
 }
 </script>
