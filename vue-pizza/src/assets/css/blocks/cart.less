@@ -36,6 +36,7 @@
 .cart__item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     margin-bottom: 20px;
 }
@@ -52,8 +53,8 @@
 }
 
 .cart-info-title {
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 600;
     line-height: 24px;
     color: @black;
 
@@ -61,11 +62,27 @@
 }
 
 .cart-info-ingredients {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     line-height: 22px;
     color: gray;
-    max-width: 300px;
+    max-width: 500px;
+
+    &--default {
+        color: #1EBC13;
+    }
+
+    &--selected {
+        color: @red;
+    }
+
+    &--default::after, &--selected::after {
+        content: '-';
+    }
+
+    &--default:last-child::after, &--selected:last-child::after {
+        content: '';
+    }
 }
 
 .cart__item-price-wrapper {
@@ -74,7 +91,7 @@
 }
 
 .cart__item-price {
-    font-size: 18px;
+    font-size: 16px;
     color: @red;
     font-weight: 500;
     margin-right: 15px;
@@ -104,5 +121,17 @@
 .price-total-text {
     color: gray;
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 500;
+}
+
+.empty_cart {
+    font-size: 21px;
+    font-weight: bold;
+    text-align: center;
+
+    & img {
+        display: block;
+        max-width: 150px;
+        margin: 30px auto;
+    }
 }

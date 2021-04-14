@@ -17,7 +17,7 @@
                       type="button"
                       class="constructor__ingredients-button constructor__ingredients-button--checked"
                       @click="handleDefaultIngredients($event.target, ingredient)">
-                {{ ingredient }}
+                {{ ingredient.value }}
               </button>
 
             </div>
@@ -27,11 +27,11 @@
             <h2 class="constructor__title">Дополнительные игредиенты</h2>
             <div class="constructor__ingredients-items" id="constructor__allIngredients">
 
-              <button v-for="ingredient in ingredients"
+              <button v-for="ingredient in additionalIngredients"
                       :key="ingredient.id"
                       type="button"
                       class="constructor__ingredients-button"
-                      @click="handleAdditionalIngredients($event.target, ingredient.value, ingredient.cost)">
+                      @click="handleAdditionalIngredients($event.target, ingredient)">
                 {{ ingredient.value }}
               </button>
 
@@ -39,22 +39,21 @@
           </div>
         </div>
 
-
         <div class="constructor__pizza-info">
           <div id="pizza-info__details">
 
-            <img class="pizza-info__image" src="../assets/img/products/pizza1.jpg" alt="pizza">
+            <img class="pizza-info__image" :src="pizza.image" alt="pizza">
             <p class="pizza-info__name">{{ pizza.name }}</p>
             <div class="pizza-info__selected-dough">
-              {{ pizza.dough }}
+              {{ pizza.dough.type }}
             </div>
 
             <div class="pizza-info__sizes">
               <button v-for="size in sizes"
                       :key="size.id"
                       class="pizzas__item-size"
-                      :class="size.value === pizza.size ? 'size-selected' : ''"
-                      @click="changeSize(size.value, $event.target)">
+                      :class="size.value === pizza.size.value ? 'size-selected' : ''"
+                      @click="changeSize(size, $event.target)">
                 {{ size.value }} см
               </button>
             </div>
@@ -69,11 +68,11 @@
 
             <li class="pizza-info__selected-ingredient">
               <p class="pizza-info__selected-ingredient-text">
-                {{ pizza.dough }}, {{ pizza.size }} см
+                {{ pizza.dough.type }}, {{ pizza.size.value }} см
               </p>
 
               <p class="pizza-info__selected-ingredient-price">
-                {{ pizzaCost }} лей
+                {{ pizza.size.cost + pizza.size.cost }} лей
               </p>
             </li>
 
@@ -82,7 +81,7 @@
                 class="pizza-info__selected-ingredient">
 
               <p class="pizza-info__selected-ingredient-text">
-                {{ defaultIngredient }}
+                {{ defaultIngredient.value }}
               </p>
 
             </li>
@@ -107,7 +106,9 @@
 
 
           <div class="pizza-info__wrapper">
-            <button id="constructor-addToCart" class="btn-tocart">
+            <button id="constructor-addToCart"
+                    class="btn-tocart"
+                    @click="sendChangesToCart()">
               В корзину
             </button>
 
@@ -134,33 +135,28 @@ export default {
   data() {
     return {
       pizza: {},
-      ingredients: {},
-      sizes: {},
+      sizes: [],
       defaultIngredients: [],
+      additionalIngredients: [],
       selectedIngredients: [],
       allIngredients: [],
       totalPrice: 0,
+      basePrice: 0,
       additionalPrice: 0,
-      pizzaCost: 0,
     }
   },
   created() {
     this.loadPizza();
-    this.loadIngredients();
     this.loadSizes();
   },
   methods: {
     async loadPizza() {
       this.pizza = await fetch(
-          `${this.$store.getters.getServerUrl}/pizzas/${this.id}`
+          `${this.$store.getters.getServerUrl}/intermediate/${this.id}`
       ).then(response => response.json());
       this.defaultIngredients = (this.pizza.ingredients).slice();
-      this.totalPrice = this.pizzaCost = this.pizza.cost;
-    },
-    async loadIngredients() {
-      this.ingredients = await fetch(
-          `${this.$store.getters.getServerUrl}/ingredients/`
-      ).then(response => response.json())
+      this.additionalIngredients = (this.pizza.additionalIngredients).slice();
+      this.totalPrice = this.basePrice = this.pizza.cost + this.pizza.dough.cost + this.pizza.size.cost;
     },
     async loadSizes() {
       this.sizes = await fetch(
@@ -178,15 +174,15 @@ export default {
         this.defaultIngredients.push(ingredient);
       }
     },
-    handleAdditionalIngredients(button, value, cost) {
+    handleAdditionalIngredients(button, ingredient) {
       this.allIngredients = this.defaultIngredients.concat(this.selectedIngredients);
 
       if (button.classList.contains('constructor__ingredients-button--checked')) {
         button.classList.remove('constructor__ingredients-button--checked');
-        this.selectedIngredients.splice(this.selectedIngredients.indexOf(value), 1);
+        this.selectedIngredients.splice(this.selectedIngredients.indexOf(ingredient.value), 1);
       } else if (this.allIngredients.length < 10) {
         button.classList.add('constructor__ingredients-button--checked');
-        this.selectedIngredients.push({value, cost});
+        this.selectedIngredients.push(ingredient);
       }
 
       this.additionalPrice = 0;
@@ -195,7 +191,7 @@ export default {
         this.additionalPrice += ingredient.cost;
       });
 
-      this.totalPrice = this.pizzaCost + this.additionalPrice;
+      this.totalPrice = this.basePrice + this.additionalPrice;
     },
     changeSize(size, sizeBtn) {
       let sizesButtons = document.getElementsByClassName('pizzas__item-size');
@@ -203,24 +199,48 @@ export default {
         btn.classList.remove('size-selected');
       }
       sizeBtn.classList.add('size-selected');
+      this.pizza.size = size;
+      this.totalPrice = this.basePrice + this.additionalPrice + size.cost;
+    },
+    async sendChangesToCart() {
+      this.allIngredients = this.defaultIngredients.concat(this.selectedIngredients);
 
-      let coefficient = 0;
-      switch (size) {
-        case 25:
-          coefficient = 0.8;
-          break;
-        case 30:
-          coefficient = 1;
-          break;
-        case 35:
-          coefficient = 1.2;
-          break;
-        case 40:
-          coefficient = 1.4;
-          break;
+      let data = {
+        name: this.pizza.name,
+        image: this.pizza.image,
+        dough: this.pizza.dough,
+        cost: this.totalPrice,
+        size: this.pizza.size,
+        ingredients: this.defaultIngredients,
+        additionalIngredients: this.selectedIngredients,
       }
-      this.pizzaCost = Math.ceil(this.pizza.cost * coefficient);
-      this.totalPrice = Math.ceil((this.pizzaCost + this.additionalPrice) * coefficient);
+
+      await fetch(`${this.$store.getters.getServerUrl}/cart/${this.id}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          }
+      ).then(response => response.json());
+      await this.saveToCart();
+      await this.$router.push({name: 'Home'});
+    },
+    async saveToCart() {
+      let data = {
+        id: this.pizza.id
+      }
+
+      fetch(`${this.$store.getters.getServerUrl}/cart/${this.id}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          }
+      ).then(response => response.json())
     }
   }
 }

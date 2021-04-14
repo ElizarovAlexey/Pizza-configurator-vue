@@ -48,25 +48,45 @@
           <div id="pizzas__items" class="pizzas__items">
 
             <div v-for="pizza in pizzasList" :key="pizza.id" class="pizzas__item">
+
               <div class="pizzas__item-img">
                 <img class="pizzas__item-image" :src="pizza.image" alt="pizza">
               </div>
-              <p class="pizzas__item-title">{{ pizza.name }}</p>
+
+              <p class="pizzas__item-title">
+                {{ pizza.name }}
+              </p>
+
               <p class="pizzas__item-description">
                 {{ pizza.description }}
               </p>
+
               <div class="pizzas__item-dough-container">
-                <button class="pizzas__item-dough dough-selected">{{ pizza.dough }} тесто</button>
+                <button class="pizzas__item-dough dough-selected">
+                  {{ pizza.dough.type }} тесто
+                </button>
               </div>
+
               <div class="pizzas__item-sizes">
-                <button class="pizzas__item-size size-selected">{{ pizza.size }} см</button>
+                <button class="pizzas__item-size size-selected">
+                  {{ pizza.size.value }} см
+                </button>
               </div>
-              <a @click="openConstructor(pizza.id)" class="pizzas__detail-btnAdd" href="#">
-                <img src="../assets/img/icons/plus-icon.png" alt="plus icon">Изменить ингредиенты
+
+              <a @click="sendPizzaId(pizza.id)" class="pizzas__detail-btnAdd" href="#">
+                <img src="../assets/img/icons/plus-icon.png" alt="plus icon"> Изменить ингредиенты
               </a>
+
               <div class="pizzas__item-wrapper">
-                <button class="btn-tocart pizzas__item-tocart">В корзину</button>
-                <p class="pizzas__item-price">{{ pizza.cost }} лей</p>
+
+                <button @click="addToCart('pizza', pizza)" class="btn-tocart pizzas__item-tocart">
+                  В корзину
+                </button>
+
+                <p class="pizzas__item-price">
+                  {{ pizza.cost + pizza.dough.cost + pizza.size.cost }} лей
+                </p>
+
               </div>
             </div>
 
@@ -89,7 +109,7 @@
 
             <div v-for="dessert in dessertsList" :key="dessert.id" class="pizzas__item desserts__item">
               <div class="pizzas__item-img desserts__item-img">
-                <img class="pizzas__item-image desserts__item-image" src="../assets/img/products/dessert1.webp"
+                <img class="pizzas__item-image desserts__item-image" :src="dessert.image"
                      alt="dessert">
               </div>
               <p class="pizzas__item-title desserts__item-title">{{ dessert.name }}</p>
@@ -97,7 +117,7 @@
                 {{ dessert.description }}
               </p>
               <div class="desserts__item-wrapper pizzas__item-wrapper">
-                <button class="btn-tocart pizzas__item-tocart">В корзину</button>
+                <button @click="addToCart('dessert', dessert)" class="btn-tocart pizzas__item-tocart">В корзину</button>
                 <p class="desserts__item-price pizzas__item-price">{{ dessert.cost }} лей</p>
               </div>
             </div>
@@ -120,7 +140,7 @@
 
             <div v-for="drink in drinksList" :key="drink.id" class="pizzas__item drinks__item">
               <div class="pizzas__item-img drinks__item-img">
-                <img class="pizzas__item-image drinks__item-image" src="../assets/img/products/drink1.webp"
+                <img class="pizzas__item-image drinks__item-image" :src="drink.image"
                      alt="pizza">
               </div>
               <p class="pizzas__item-title drinks__item-title">{{ drink.name }}</p>
@@ -128,7 +148,7 @@
                 {{ drink.description }}
               </p>
               <div class="drinks__item-wrapper pizzas__item-wrapper">
-                <button class="btn-tocart drinks__item-tocart">В корзину</button>
+                <button @click="addToCart('drink', drink)" class="btn-tocart drinks__item-tocart">В корзину</button>
                 <p class="drinks__item-price pizzas__item-price">{{ drink.cost }} лей</p>
               </div>
             </div>
@@ -150,6 +170,7 @@ export default {
       pizzasList: [],
       dessertsList: [],
       drinksList: [],
+      cartItems: []
     }
   },
   components: {},
@@ -174,9 +195,77 @@ export default {
           `${this.$store.getters.getServerUrl}/drinks/`
       ).then(response => response.json())
     },
+    async loadCartItems() {
+      this.cartItems = await fetch(
+          `${this.$store.getters.getServerUrl}/cart/`
+      ).then(response => response.json());
+    },
     openConstructor(id) {
       this.$router.push({name: 'Constructor', params: {id: id}})
     },
+    sendPizzaId(id) {
+      let data = {
+        id: id
+      }
+
+      fetch(`${this.$store.getters.getServerUrl}/pizzas/`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          }
+      ).then(response => response.json())
+          .then(data => this.openConstructor(data))
+    },
+    async addToCart(type, product) {
+
+      const query = data => {
+        fetch(`${this.$store.getters.getServerUrl}/cart/`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            }
+        ).then(response => response.json());
+      }
+
+      if (type === 'dessert') {
+        let data = {
+          type: 'dessert',
+          name: product.name,
+          image: product.image,
+          cost: product.cost
+        };
+        query(data);
+      }
+
+      if (type === 'drink') {
+        let data = {
+          type: 'drink',
+          name: product.name,
+          image: product.image,
+          cost: product.cost
+        };
+        query(data);
+      }
+
+      if (type === 'pizza') {
+        let data = {
+          type: 'pizza',
+          name: product.name,
+          image: product.image,
+          cost: product.cost + product.size.cost + product.dough.cost,
+          dough: product.dough.id,
+          size: product.size.id,
+          ingredients: product.ingredients
+        };
+        query(data);
+      }
+    }
   }
 }
 </script>

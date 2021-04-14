@@ -5,24 +5,24 @@
       <div class="container header__container">
         <div class="header__inner">
           <div id="header__logo" class="header__logo">
-            <a href="#">
-              <img class="header__logo-image" src="../assets/img/icons/logo.png" alt="Logotype">
+            <a href="/">
+              <img class="header__logo-image" src="../assets/img/icons/logo.jpg" alt="Logotype">
             </a>
           </div>
 
           <ul id="nav" class="nav nav__items">
             <li class="nav__item">
-              <a href="#" class="nav__item-link js-scroll">
+              <a href="/#pizzas" class="nav__item-link">
                 <img src="../assets/img/icons/pizza-icon.png" alt="Pizza icon"> Пиццы
               </a>
             </li>
             <li class="nav__item">
-              <a href="#" class="nav__item-link js-scroll">
+              <a href="/#desserts" class="nav__item-link">
                 <img src="../assets/img/icons/dessert-icon.png" alt="Drink icon"> Десерты
               </a>
             </li>
             <li class="nav__item">
-              <a href="#" class="nav__item-link js-scroll">
+              <a href="/#drinks" class="nav__item-link">
                 <img src="../assets/img/icons/drink-icon.png" alt="Drink icon"> Напитки
               </a>
             </li>
@@ -32,9 +32,9 @@
           </ul>
 
           <div class="header__cart">
-            <a href="#" class="header__cart-link">
+            <a @click="goToCart()" href="#" class="header__cart-link">
               <img src="../assets/img/icons/cart.png" alt="Cart" class="header__cart-image">
-              <div id="cart-counter" class="header__cart-counter">0</div>
+              <div id="cart-counter" class="header__cart-counter">{{ cartItems.length }}</div>
             </a>
           </div>
 
@@ -49,7 +49,25 @@
 
 <script>
 export default {
-  name: "Nav"
+  name: "Nav",
+  data() {
+    return {
+      cartItems: []
+    }
+  },
+  created() {
+    this.loadCartItems();
+  },
+  methods: {
+    goToCart() {
+      this.$router.push({name: 'Cart'});
+    },
+    async loadCartItems() {
+      this.cartItems = await fetch(
+          `${this.$store.getters.getServerUrl}/cart/`
+      ).then(response => response.json());
+    },
+  }
 }
 </script>
 

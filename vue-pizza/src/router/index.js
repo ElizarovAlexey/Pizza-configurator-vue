@@ -22,7 +22,7 @@ const routes = [
     path: '/cart',
     name: 'Cart',
     component: Cart
-  },
+  }
 ]
 
 const router = new VueRouter({
