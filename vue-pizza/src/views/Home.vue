@@ -1,42 +1,5 @@
 <template>
   <div class="home">
-    <!-- Slider -->
-    <div class="slider">
-      <div class="slider__container">
-        <div class="slider__inner">
-
-          <div class="slider__items">
-            <img class="slider__item" src="../assets/img/slider/slide1.png" alt="Slide">
-            <img class="slider__item" src="../assets/img/slider/slide2.png" alt="Slide">
-            <img class="slider__item" src="../assets/img/slider/slide3.png" alt="Slide">
-            <img class="slider__item" src="../assets/img/slider/slide1.png" alt="Slide">
-            <img class="slider__item" src="../assets/img/slider/slide2.png" alt="Slide">
-            <img class="slider__item" src="../assets/img/slider/slide3.png" alt="Slide">
-          </div>
-
-          <div class="slider__arrows">
-            <img id="arrow-left" class="slider__arrow slider__arrow--left" src="../assets/img/icons/left-arrow.png"
-                 alt="left arrow">
-
-            <img id="arrow-right" class="slider__arrow slider__arrow--right"
-                 src="../assets/img/icons/right-arrow.png"
-                 alt="right arrow">
-          </div>
-
-          <div id="slider__dots" class="slider__dots">
-            <div class="slider__dots-item slider__dots-item--active"></div>
-            <div class="slider__dots-item"></div>
-            <div class="slider__dots-item"></div>
-            <div class="slider__dots-item"></div>
-            <div class="slider__dots-item"></div>
-            <div class="slider__dots-item"></div>
-          </div>
-
-        </div> <!-- ./slider__inner -->
-      </div> <!-- ./container -->
-    </div> <!-- ./slider -->
-
-
     <!-- Pizzas -->
     <section id="pizzas" class="pizzas">
       <div class="container">
@@ -170,7 +133,7 @@ export default {
       pizzasList: [],
       dessertsList: [],
       drinksList: [],
-      cartItems: []
+      cartItems: [],
     }
   },
   components: {},
