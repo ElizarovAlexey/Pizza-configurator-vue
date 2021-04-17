@@ -193,11 +193,12 @@ export default {
               },
               body: JSON.stringify(data)
             }
-        ).then(response => response.json());
+        )
       }
 
       if (type === 'dessert') {
         let data = {
+          id: product.id,
           type: 'dessert',
           name: product.name,
           image: product.image,
@@ -208,22 +209,26 @@ export default {
 
       if (type === 'drink') {
         let data = {
+          id: product.id,
           type: 'drink',
           name: product.name,
           image: product.image,
-          cost: product.cost
+          cost: product.cost,
+          count: product.count
         };
         query(data);
       }
 
       if (type === 'pizza') {
         let data = {
+          id: product.id,
           type: 'pizza',
           name: product.name,
           image: product.image,
           cost: product.cost + product.size.cost + product.dough.cost,
           dough: product.dough.id,
           size: product.size.id,
+          count: product.count,
           ingredients: product.ingredients
         };
         query(data);

@@ -31,12 +31,18 @@
             </li>
           </ul>
 
-          <div class="header__cart">
-            <a @click="goToCart()" href="#" class="header__cart-link">
-              <img src="../assets/img/icons/cart.png" alt="Cart" class="header__cart-image">
-              <div id="cart-counter" class="header__cart-counter">{{ cartItems.length }}</div>
-            </a>
-          </div>
+            <div class="header__cart">
+              <a @click="goToCart()" href="#" class="header__cart-link">
+                <img src="../assets/img/icons/cart.png" alt="Cart" class="header__cart-image">
+                <div id="cart-counter" class="header__cart-counter">{{ cartItems.length }}</div>
+              </a>
+            </div>
+
+<!--          <div class="header__orders">-->
+<!--            <a @click="goToCart()" href="#" class="header__order-link">-->
+<!--              <img src="../assets/img/icons/orders.png" alt="Orders" class="header__order-image">-->
+<!--            </a>-->
+<!--          </div>-->
 
           <div id="header__burger" class="header__burger">
             <img class="header__burger-image" src="../assets/img/icons/burger-icon.png" alt="Burger icon">

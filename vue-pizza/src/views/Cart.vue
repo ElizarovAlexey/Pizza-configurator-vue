@@ -25,13 +25,15 @@
                   <p class="cart-info__dough">{{ item.dough.type }} тесто, {{ item.size.value }} см</p>
 
                   Игредиенты:
-                  <span class="cart-info-ingredients--default" v-for="ingredient in item.ingredients" :key="ingredient.id">
+                  <span class="cart-info-ingredients--default" v-for="ingredient in item.ingredients"
+                        :key="ingredient.id">
                     {{ ingredient.value }}
                   </span>
                 </div>
                 <div v-if="item.additionalIngredients.length !== 0" class="cart-info-ingredients">
                   Дополнительные:
-                  <span class="cart-info-ingredients--selected" v-for="additionalIngredient in item.additionalIngredients" :key="additionalIngredient.id">
+                  <span class="cart-info-ingredients--selected"
+                        v-for="additionalIngredient in item.additionalIngredients" :key="additionalIngredient.id">
                     {{ additionalIngredient.value }}
                   </span>
                 </div>
@@ -40,7 +42,8 @@
 
             <div class="cart__item-price-wrapper">
 
-                <input @change="changeCountItem(item.id, $event.target)" :value="item.count" class="cart-info__count" type="number">
+              <input @change="changeCountItem(item.id, $event.target)" :value="item.count" class="cart-info__count"
+                     type="number">
 
               <p class="cart__item-price">
                 {{ item.cost * item.count }} лей
@@ -54,9 +57,64 @@
           </li>
         </ul>
 
-        <p class="cart__price-total">
+        <p v-if="cartItems.length !== 0" class="cart__price-total">
           <span class="price-total-text">Итого: </span>{{ this.totalPrice }} лей
         </p>
+
+        <form class="cart__form">
+          <h2 class="form-title">Заполните данные заказа</h2>
+
+          <label class="form-label" for="cart-name">
+            Имя фамилия
+            <span class="cart__form-required-field">*</span>
+          </label>
+          <input class="form-input"
+                 id="cart-name"
+                 type="text"
+                 required
+                 placeholder="Имя фамилия"
+                 v-model="formData.name">
+          <label class="form-label" for="cart-phone">
+            Телефон
+            <span class="cart__form-required-field">*</span>
+          </label>
+          <input class="form-input"
+                 id="cart-phone"
+                 type="text"
+                 required
+                 placeholder="Телефон"
+                 v-model="formData.phone">
+          <label class="form-label" for="cart-email">
+            Емайл
+            <span class="cart__form-required-field">*</span>
+          </label>
+          <input class="form-input"
+                 id="cart-email"
+                 type="email"
+                 required
+                 placeholder="Емайл"
+                 v-model="formData.email">
+          <label class="form-label" for="cart-address">
+            Адрес
+            <span class="cart__form-required-field">*</span>
+          </label>
+          <input class="form-input"
+                 id="cart-address"
+                 type="text"
+                 required
+                 placeholder="Адрес"
+                 v-model="formData.address">
+          <label class="form-label" for="cart-comment">Комментарий</label>
+          <textarea class="form-input--comment"
+                    id="cart-comment"
+                    cols="30"
+                    rows="5"
+                    placeholder="Комментарий"
+                    v-model="formData.commentary">
+          </textarea>
+
+          <button @click="sendOrder()" class="cart__form-submit btn-tocart" type="submit">Заказать</button>
+        </form>
       </div> <!-- /.cart__inner -->
     </div> <!-- /.container -->
   </div> <!-- /.cart -->
@@ -69,6 +127,13 @@ export default {
     return {
       cartItems: [],
       totalPrice: null,
+      formData: {
+        name: '',
+        phone: '',
+        address: '',
+        email: '',
+        commentary: ''
+      }
     }
   },
   created() {
@@ -91,7 +156,7 @@ export default {
     async deleteItem(id) {
       let data = {
         id: id
-      }
+      };
 
       await fetch(`${this.$store.getters.getServerUrl}/cart/`,
           {
@@ -107,11 +172,11 @@ export default {
       });
     },
     async changeCountItem(id, input) {
-      if(input.value > 0) {
+      if (input.value > 0) {
         let data = {
           id: id,
           count: input.value
-        }
+        };
 
         await fetch(`${this.$store.getters.getServerUrl}/cart/`,
             {
@@ -126,22 +191,51 @@ export default {
           this.loadCartItemsList();
         });
       }
+    },
+    async sendOrder() {
+      let data = {
+        clientData: this.formData,
+        products: [],
+        totalPrice: this.totalPrice
+      };
+
+      this.cartItems.forEach(item => {
+        data.products.push(item.id);
+      });
+
+      if(data.products.length !== 0) {
+        await fetch(`${this.$store.getters.getServerUrl}/orders/`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            }
+        ).then(response => response.json());
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-  .cart {
-    margin: 70px 0 200px 0;
-  }
-  .cart-info__dough {
-    color: black;
-    margin-bottom: 10px;
-  }
-  .cart-info__count {
-    width: 40px;
-    margin-right: 20px;
-    text-align: center;
-  }
+.cart {
+  margin: 70px 0 200px 0;
+}
+
+.cart-info__dough {
+  color: black;
+  margin-bottom: 10px;
+}
+
+.cart-info__count {
+  width: 40px;
+  margin-right: 20px;
+  text-align: center;
+}
+
+.cart__form-required-field {
+  color: red;
+}
 </style>
