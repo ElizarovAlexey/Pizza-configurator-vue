@@ -203,14 +203,10 @@ export default {
       this.totalPrice = this.basePrice + this.additionalPrice + size.cost;
     },
     async sendChangesToCart() {
-      this.allIngredients = this.defaultIngredients.concat(this.selectedIngredients);
-
       let data = {
-        name: this.pizza.name,
-        image: this.pizza.image,
-        dough: this.pizza.dough,
+        dough: this.pizza.dough.id,
+        size: this.pizza.size.id,
         cost: this.totalPrice,
-        size: this.pizza.size,
         ingredients: this.defaultIngredients,
         additionalIngredients: this.selectedIngredients,
       }
@@ -240,7 +236,10 @@ export default {
             },
             body: JSON.stringify(data)
           }
-      ).then(response => response.json())
+      ).then(response => {
+        response.json();
+        this.$store.dispatch('loadCartItems');
+      })
     }
   }
 }

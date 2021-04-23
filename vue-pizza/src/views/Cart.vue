@@ -6,6 +6,9 @@
         <h2 class="cart__title">
           Корзина
         </h2>
+        <p v-if="cartItems.length !== 0" class="discount-message">
+           Внимание! При покупке на сумму выше 400 лей действует скидка 5% на помеченные товары!
+        </p>
         <hr class="cart__sep">
 
         <div v-if="this.cartItems.length === 0" class="empty_cart">
@@ -45,9 +48,15 @@
               <input @change="changeCountItem(item.id, $event.target)" :value="item.count" class="cart-info__count"
                      type="number">
 
-              <p class="cart__item-price">
-                {{ item.cost * item.count }} лей
-              </p>
+              <div class="cart__item-prices">
+                <p :class="{crossedPrice: item.discount && totalPrice > 400}" class="cart__item-price">
+                  {{ item.cost * item.count }} лей
+                </p>
+
+                <p v-if="item.discount && totalPrice > 400" class="cart__item-price">
+                  {{ Math.floor((item.cost * item.count) * 0.95) }} лей
+                </p>
+              </div>
 
               <button @click="deleteItem(item.id)" type="button" id="cart__item-delete" class="cart__item-delete">
                 &times;
@@ -61,7 +70,7 @@
           <span class="price-total-text">Итого: </span>{{ this.totalPrice }} лей
         </p>
 
-        <form class="cart__form">
+        <form v-if="cartItems.length !== 0" class="cart__form">
           <h2 class="form-title">Заполните данные заказа</h2>
 
           <label class="form-label" for="cart-name">
@@ -147,11 +156,23 @@ export default {
       this.calculateTotalPrice();
     },
     calculateTotalPrice() {
+      let tempPrice = 0;
       this.totalPrice = 0;
 
       this.cartItems.forEach(item => {
-        this.totalPrice += item.cost * item.count;
+          this.totalPrice += item.cost * item.count;
       });
+
+      if(this.totalPrice > 400) {
+        this.cartItems.forEach(item => {
+          if(item.discount) {
+            tempPrice += Math.floor(item.cost * item.count * 0.95);
+          } else {
+            tempPrice += item.cost * item.count;
+          }
+        });
+        this.totalPrice = tempPrice;
+      }
     },
     async deleteItem(id) {
       let data = {
@@ -169,6 +190,7 @@ export default {
       ).then(response => {
         response.json();
         this.loadCartItemsList();
+        this.$store.dispatch('loadCartItems');
       });
     },
     async changeCountItem(id, input) {
@@ -236,6 +258,22 @@ export default {
 }
 
 .cart__form-required-field {
+  color: red;
+}
+
+.cart__item-prices {
+  display: block;
+}
+
+.crossedPrice {
+  text-decoration: line-through;
+  color: black;
+}
+
+.discount-message {
+  margin-bottom: 20px;
+  font-size: 15px;
+  text-align: center;
   color: red;
 }
 </style>

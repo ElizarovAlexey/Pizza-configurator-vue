@@ -12,6 +12,15 @@
 
             <div v-for="pizza in pizzasList" :key="pizza.id" class="pizzas__item">
 
+              <div v-if="pizza.discount" class="product__item-discount">
+                <div class="discount-image-container">
+                  <img class="discount-image" src="../assets/img/icons/discount.png" alt="discount">
+                  <div class="discount-text">
+                    Данная пицца содержит скидку.
+                  </div>
+                </div>
+              </div>
+
               <div class="pizzas__item-img">
                 <img class="pizzas__item-image" :src="pizza.image" alt="pizza">
               </div>
@@ -158,11 +167,6 @@ export default {
           `${this.$store.getters.getServerUrl}/drinks/`
       ).then(response => response.json())
     },
-    async loadCartItems() {
-      this.cartItems = await fetch(
-          `${this.$store.getters.getServerUrl}/cart/`
-      ).then(response => response.json());
-    },
     openConstructor(id) {
       this.$router.push({name: 'Constructor', params: {id: id}})
     },
@@ -193,16 +197,16 @@ export default {
               },
               body: JSON.stringify(data)
             }
-        )
+        ).then(response => {
+          response.json();
+          this.$store.dispatch('loadCartItems');
+        })
       }
 
       if (type === 'dessert') {
         let data = {
           id: product.id,
-          type: 'dessert',
-          name: product.name,
-          image: product.image,
-          cost: product.cost
+          type: 'dessert'
         };
         query(data);
       }
@@ -210,11 +214,7 @@ export default {
       if (type === 'drink') {
         let data = {
           id: product.id,
-          type: 'drink',
-          name: product.name,
-          image: product.image,
-          cost: product.cost,
-          count: product.count
+          type: 'drink'
         };
         query(data);
       }
@@ -223,13 +223,7 @@ export default {
         let data = {
           id: product.id,
           type: 'pizza',
-          name: product.name,
-          image: product.image,
-          cost: product.cost + product.size.cost + product.dough.cost,
-          dough: product.dough.id,
-          size: product.size.id,
-          count: product.count,
-          ingredients: product.ingredients
+          cost: product.cost + product.size.cost + product.dough.cost
         };
         query(data);
       }
